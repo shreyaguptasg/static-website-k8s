@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: static-web
+  labels:
+    app: static-web
 spec:
   replicas: 1
   selector:
@@ -14,6 +16,8 @@ spec:
     spec:
       containers:
         - name: static-web
-          image: shreya/static-web:latest
+          image: {{IMAGE}}
+          imagePullPolicy: Always
           ports:
             - containerPort: 80
+``
