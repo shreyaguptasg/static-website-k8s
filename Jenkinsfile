@@ -10,7 +10,7 @@ pipeline {
     // Prefer Jenkins user's default kubeconfig if you moved it there earlier:
     // KUBECONFIG = "${env.HOME}/.kube/config"
     // Otherwise use your file path:
-    KUBECONFIG = "/var/lib/jenkins/k3s.yaml"
+    KUBECONFIG = "/home/ec2-user/.kube/config"
   }
 
   stages {
