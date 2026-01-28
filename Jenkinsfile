@@ -2,27 +2,22 @@ pipeline {
     agent any
 
     environment {
-        // Docker image name (Docker Hub)
-        DOCKER_IMAGE = "shreyasg123/static-web:latest"
-
-        // Jenkins credential ID you created for Docker Hub
-        DOCKER_HUB_CRED = "dockerhub-credentials"
-
-        // KUBECONFIG path (we copied k3s.yaml to ec2-user home earlier)
-        KUBECONFIG = "/home/ec2-user/k3s.yaml"
+        DOCKER_IMAGE = "shreyasg123/static-web:latest"   // <— your Docker Hub image
+        DOCKER_HUB_CRED = "dockerhub-credentials"       // <— Jenkins me add kiya hua ID
+        KUBECONFIG = "/home/ec2-user/k3s.yaml"          // <— we copied this earlier
     }
 
     stages {
         stage('Checkout') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/<your-github-username>/static-website-k8s.git'
+                    url: 'https://github.com/shreyaguptasg/static-website-k8s.git'
             }
         }
 
         stage('Docker Build') {
             steps {
-                sh 'docker version || (echo "Docker not found" && exit 1)'
+                sh 'docker version'
                 sh 'docker build -t $DOCKER_IMAGE .'
             }
         }
@@ -41,31 +36,25 @@ pipeline {
 
         stage('Kubernetes Deploy') {
             steps {
-                // Make sure kubeconfig is set for this shell
-                sh 'export KUBECONFIG=$KUBECONFIG && kubectl version --short'
                 sh 'export KUBECONFIG=$KUBECONFIG && kubectl apply -f k8s/deployment.yaml'
                 sh 'export KUBECONFIG=$KUBECONFIG && kubectl apply -f k8s/service.yaml'
             }
         }
 
-        stage('Verify Deployment') {
+        stage('Verify') {
             steps {
                 sh '''
-                    export KUBECONFIG=$KUBECONFIG
-                    kubectl get deploy static-web
-                    kubectl get pods -l app=static-web
-                    kubectl get svc static-web-service
+                  export KUBECONFIG=$KUBECONFIG
+                  kubectl get deploy static-web
+                  kubectl get pods -l app=static-web
+                  kubectl get svc static-web-service
                 '''
             }
         }
     }
 
     post {
-        success {
-            echo '✅ Pipeline completed successfully!'
-        }
-        failure {
-            echo '❌ Pipeline failed—check the stage logs.'
-        }
+        success { echo '✅ CI/CD complete.' }
+        failure { echo '❌ Pipeline failed—check logs.' }
     }
 }
