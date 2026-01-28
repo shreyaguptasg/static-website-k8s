@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = "shreyasg123/static-web:latest"   // <— your Docker Hub image
         DOCKER_HUB_CRED = "dockerhub-credentials"       // <— Jenkins me add kiya hua ID
-        KUBECONFIG = "/home/ec2-user/k3s.yaml"          // <— we copied this earlier
+        KUBECONFIG = "/var/lib/jenkins.yaml"          // <— we copied this earlier
     }
 
     stages {
